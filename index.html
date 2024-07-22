@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Downloader</title>
+</head>
+<body>
+    <h1>YouTube Downloader</h1>
+    <input type="text" id="url" placeholder="Enter YouTube URL" />
+    <button id="downloadBtn">Download</button>
+    <p id="message"></p>
+    <p id="progress"></p>
+    <script>
+        const downloadBtn = document.getElementById('downloadBtn');
+        const urlInput = document.getElementById('url');
+        const message = document.getElementById('message');
+        const progress = document.getElementById('progress');
+
+        downloadBtn.addEventListener('click', () => {
+            const url = urlInput.value;
+            window.electron.downloadVideo(url);
+        });
+
+        window.electron.onDownloadComplete((event, filePath) => {
+            message.textContent = `Download complete: ${filePath}`;
+            progress.textContent = '';
+        });
+
+        window.electron.onDownloadError((event, error) => {
+            message.textContent = `Error: ${error}`;
+            progress.textContent = '';
+        });
+
+        window.electron.onDownloadProgress((event, data) => {
+            progress.textContent = `Progress: ${data.percent}% (${data.downloaded}MB of ${data.total}MB). Estimated time left: ${data.estimatedDownloadTime} minutes.`;
+        });
+    </script>
+</body>
+</html>
